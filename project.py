@@ -31,6 +31,7 @@ getTrack = requests.get(BASE_URL + "tracks/" + melanin, headers=headers)
 
 # # print(addPlaylist.json())
 
-
-print(getTrack.json())
+artist_Name = getTrack.json()["album"]["artists"][0]["name"]
+print(artist_Name)
+# print(getTrack.json())
 # print(auth_response_data)
