@@ -1,42 +1,63 @@
 import requests
 import json
-import re
 import os
-
-# CLIENT_ID = "ad6e6b1ab2924df7898e57312ca14813"
-# CLIENT_SECRET = "d49229ec920d417a98b068b9cebd0e2b"
+import sqlalchemy as db
+import pandas as pd
 
 AUTH_URL = 'https://accounts.spotify.com/api/token'
 
+# Get client credentials from environment variables
+client_id = os.environ.get("SPOTIFY_CLIENT_ID")
+client_secret = os.environ.get("SPOTIFY_CLIENT_SECRET")
+
+# Check if client credentials are correctly loaded
+print(f"Client ID: {client_id}")
+print(f"Client Secret: {client_secret}")
+
+# Make a POST request to get the access token
 auth_response = requests.post(AUTH_URL, {
-'grant_type': 'client_credentials',
-'client_id': os.environ.get('SPOTIFY_CLIENT_ID'),
-'client_secret': os.environ.get('SPOTIFY_CLIENT_SECRET'),
-"scope": "playlist-modify-public playlist-modify-private"
+    'grant_type': 'client_credentials',
+    'client_id': {client_id},
+    'client_secret': {client_secret},
 })
 
+# Print the status code and response
+print("Status Code:", auth_response.status_code)
+print("Response JSON:", auth_response.json())
+
+# Parse the JSON response
 auth_response_data = auth_response.json()
-access_token = auth_response_data['access_token']
-headersGet = {'Authorization': 'Bearer {token}'.format(token=access_token)}
 
-BASE_URL = 'https://api.spotify.com/v1/'
+# Check if 'access_token' is in the response
+if 'access_token' in auth_response_data:
+    access_token = auth_response_data['access_token']
+    headers = {'Authorization': 'Bearer {token}'.format(token=access_token)}
 
-#Track Ids
-melanin = "6P4kIjBGUzlieJBkUFobTL"
-game_changer = "5GxeZ0u1qDX95nZwV055JS"
+    BASE_URL = 'https://api.spotify.com/v1/'
 
-# Get Track (POST)
-getTrack = requests.get(BASE_URL + "tracks/" + melanin, headers=headersGet)
-artist_Name = getTrack.json()["album"]["artists"][0]["name"]
-print(getTrack.status_code)
-print(artist_Name)
+    # Track IDs
+    melanin = "6P4kIjBGUzlieJBkUFobTL"
+    game_changer = "5GxeZ0u1qDX95nZwV055JS"
+
+    # Get Track (GET)
+    response = requests.get(BASE_URL + "tracks/" + melanin, headers=headers)
+    artist_Name = response.json()["album"]["artists"][0]["name"]
+    print(response.status_code)
+    print(artist_Name)
+
+else:
+    print("Error: 'access_token' not found in the response.")
+    print("Response contains error:", auth_response_data.get('error', 'No error key'))
+    print("Error description:", auth_response_data.get('error_description', 'No error description'))
 
 
-# # Add Items to a Playlist (POST)
-# tracks = {"uris": ["spotify:track:" + game_changer, "spotify:track:" + melanin]}
-# playlist_id = "1kT2DU41AV0cK9JQbEm6wS"
+getTrack = pd.DataFrame.from_dict(response.json())
 
-# headersPost = {'Authorization': 'Bearer {token}'.format(token=access_token)}
-# # print(headersPost)
-# addPlaylist = requests.post(BASE_URL + "playlists/" + playlist_id + "/tracks", headers=headersPost)
-# print(addPlaylist.json())
+engine = db.create_engine('sqlite:///getTrack.db')
+
+getTrack.to_sql('Track', con=engine, if_exists='replace', index=False)
+
+with engine.connect() as connection:
+   query_result = connection.execute(db.text("SELECT * FROM Track;")).fetchall()
+   print(pd.DataFrame(query_result))
+
