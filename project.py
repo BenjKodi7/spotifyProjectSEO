@@ -47,7 +47,9 @@ if 'access_token' in auth_response_data:
 
 else:
     print("Error: 'access_token' not found in the response.")
-    print("Response contains error:", auth_response_data.get('error', 'No error key'))
+    print("Response contains error: " + 
+      auth_response_data.get('error', 'No error key'))
+)
     print("Error description:", auth_response_data.get('error_description', 'No error description'))
 
 
@@ -58,6 +60,5 @@ engine = db.create_engine('sqlite:///getTrack.db')
 getTrack.to_sql('Track', con=engine, if_exists='replace', index=False)
 
 with engine.connect() as connection:
-   query_result = connection.execute(db.text("SELECT * FROM Track;")).fetchall()
-   print(pd.DataFrame(query_result))
-
+    query_result = connection.execute(db.text("SELECT * FROM Track;")).fetchall()
+    print(pd.DataFrame(query_result))
