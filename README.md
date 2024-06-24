@@ -21,7 +21,7 @@ Open ".bashrc" so the variables are set every time the terminal re-starts: "sudo
 
 Scroll with a scrollwheel or use your arrow keys to get to the bottom of the file and add the variables (Replace variable_value with your information):
 
-export SPOTIFY_CLIENT_ID=[variable_value]
+export SPOTIFY_CLIENT_ID=[variable_value] \
 export SPOTIFY_CLIENT_SECRET=[variable_value]
 
 Press "ctrl" or "command + x" to exit
@@ -30,3 +30,6 @@ Run the file so the environments are set for this terminal session: "source ~/.b
 
 #### Running the File: 
 Lastly, run this command "python3 project.py" in the terminal and you should see the API request access code, artist name, and the printed query results
+
+Workflow Badge Status: \
+![Status of Code Workflow](https://github.com/BenjKodi7/spotifyProjectSEO/actions/workflows/main.yml/badge.svg)
