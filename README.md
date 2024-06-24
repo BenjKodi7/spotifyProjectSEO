@@ -32,4 +32,6 @@ Run the file so the environments are set for this terminal session: "source ~/.b
 Lastly, run this command "python3 project.py" in the terminal and you should see the API request access code, artist name, and the printed query results
 
 Workflow Badge Status: \
-![Status of Code Workflow](https://github.com/BenjKodi7/spotifyProjectSEO/actions/.github/workflows/main.yaml/badge.svg)
+![Status of Styling Workflow](https://github.com/BenjKodi7/spotifyProjectSEO/actions/.github/workflows/main.yaml/badge.svg)
+![Status of Testing Workflow](https://github.com/BenjKodi7/spotifyProjectSEO/actions/.github/workflows/test.yaml/badge.svg)
+
